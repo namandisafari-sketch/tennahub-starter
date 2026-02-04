@@ -62,14 +62,15 @@ export default function Grades() {
       
       if (!profile) return null;
 
-      // Check if user is admin (admins can access all)
+      // Check if user is admin, owner, or director (they can access all)
       const { data: roleData } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", user.id)
         .maybeSingle();
 
-      if (roleData?.role === "admin") {
+      const privilegedRoles = ["admin", "owner", "director", "superadmin"];
+      if (roleData?.role && privilegedRoles.includes(roleData.role)) {
         return { assignedClasses: "all", assignedSubjects: "all" } as const;
       }
 
