@@ -62,7 +62,7 @@ export default function Grades() {
       
       if (!profile) return null;
 
-      const privilegedRoles = ["admin", "owner", "director", "superadmin"];
+      const privilegedRoles = ["admin", "owner", "tenant_owner", "director", "superadmin"];
 
       // Check profile.role first (common storage location)
       if (profile.role && privilegedRoles.includes(profile.role)) {
