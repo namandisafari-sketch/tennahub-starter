@@ -53,23 +53,29 @@ export default function Grades() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return null;
 
-      // Get profile ID
+      // Get profile with role
       const { data: profile } = await supabase
         .from("profiles")
-        .select("id")
+        .select("id, role")
         .eq("id", user.id)
         .single();
       
       if (!profile) return null;
 
-      // Check if user is admin, owner, or director (they can access all)
+      const privilegedRoles = ["admin", "owner", "director", "superadmin"];
+
+      // Check profile.role first (common storage location)
+      if (profile.role && privilegedRoles.includes(profile.role)) {
+        return { assignedClasses: "all", assignedSubjects: "all" } as const;
+      }
+
+      // Also check user_roles table as fallback
       const { data: roleData } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", user.id)
         .maybeSingle();
 
-      const privilegedRoles = ["admin", "owner", "director", "superadmin"];
       if (roleData?.role && privilegedRoles.includes(roleData.role)) {
         return { assignedClasses: "all", assignedSubjects: "all" } as const;
       }
