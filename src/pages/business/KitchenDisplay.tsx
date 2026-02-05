@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useTenant } from "@/hooks/use-tenant";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
-import { ChefHat, Clock, CheckCircle, UtensilsCrossed, Timer, Bell } from "lucide-react";
+import { ChefHat, Clock, CheckCircle, UtensilsCrossed, Timer, Bell, Maximize, Minimize } from "lucide-react";
 
 interface SaleItem {
   quantity: number;
