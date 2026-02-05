@@ -27,7 +27,8 @@ interface Order {
 }
 
 export default function KitchenDisplay() {
-  const { tenantId } = useTenant();
+  const { data: tenantData } = useTenant();
+  const tenantId = tenantData?.tenantId;
   const queryClient = useQueryClient();
   const [currentTime, setCurrentTime] = useState(new Date());
 
