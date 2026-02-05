@@ -107,8 +107,8 @@ export default function KitchenDisplay() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-xl bg-orange-500/10 flex items-center justify-center">
-            <ChefHat className="h-6 w-6 text-orange-500" />
+          <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+            <ChefHat className="h-6 w-6 text-primary" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">Kitchen Display</h1>
