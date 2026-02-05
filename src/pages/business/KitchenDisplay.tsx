@@ -169,7 +169,7 @@ export default function KitchenDisplay() {
                     </div>
                     {order.notes && (
                       <p className="text-sm text-muted-foreground">
-                        Table {order.table_number}
+                        {order.notes}
                       </p>
                     )}
                   </CardHeader>
