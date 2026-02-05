@@ -185,7 +185,7 @@ export default function KitchenDisplay() {
                       ))}
                     </div>
                     <Button 
-                      className="w-full bg-orange-500 hover:bg-orange-600"
+                      className="w-full"
                       onClick={() => updateStatus.mutate({ 
                         orderId: order.id, 
                         newStatus: 'preparing' 
