@@ -2,9 +2,8 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UtensilsCrossed } from "lucide-react";
+import { UtensilsCrossed, Sparkles } from "lucide-react";
 
 interface MenuItem {
   id: string;
@@ -89,8 +88,6 @@ const PublicMenu = () => {
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-UG', {
-      style: 'currency',
-      currency: 'UGX',
       maximumFractionDigits: 0,
     }).format(amount);
   };
@@ -103,11 +100,11 @@ const PublicMenu = () => {
 
   if (tenantLoading || menuLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 p-4">
-        <div className="max-w-2xl mx-auto space-y-4">
-          <Skeleton className="h-16 w-full" />
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-32 w-full" />
+      <div className="min-h-screen bg-[#faf8f5] p-6">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <Skeleton className="h-24 w-full bg-amber-100/50" />
+          <Skeleton className="h-40 w-full bg-amber-100/50" />
+          <Skeleton className="h-40 w-full bg-amber-100/50" />
         </div>
       </div>
     );
@@ -115,13 +112,13 @@ const PublicMenu = () => {
 
   if (!tenant) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full">
-          <CardContent className="pt-6 text-center">
-            <UtensilsCrossed className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Menu Not Found</h2>
-            <p className="text-muted-foreground">
-              This menu is not available. Please scan a valid QR code.
+      <div className="min-h-screen bg-[#faf8f5] flex items-center justify-center p-6">
+        <Card className="max-w-md w-full border-amber-200/50 bg-white/80 shadow-lg">
+          <CardContent className="pt-8 text-center">
+            <UtensilsCrossed className="h-16 w-16 mx-auto text-amber-600 mb-4" />
+            <h2 className="text-2xl font-serif font-semibold text-amber-900 mb-2">Menu Not Found</h2>
+            <p className="text-amber-700/70">
+              Please scan a valid QR code to view our menu.
             </p>
           </CardContent>
         </Card>
@@ -129,113 +126,161 @@ const PublicMenu = () => {
     );
   }
 
+  const DecorativeDivider = () => (
+    <div className="flex items-center justify-center gap-3 my-6">
+      <div className="h-px w-12 bg-gradient-to-r from-transparent to-amber-400/60" />
+      <Sparkles className="h-4 w-4 text-amber-500" />
+      <div className="h-px w-12 bg-gradient-to-l from-transparent to-amber-400/60" />
+    </div>
+  );
+
+  const CategoryDivider = ({ title, description }: { title: string; description?: string | null }) => (
+    <div className="text-center py-6">
+      <div className="flex items-center justify-center gap-4 mb-2">
+        <div className="h-px w-16 bg-gradient-to-r from-transparent via-amber-400/40 to-amber-400/60" />
+        <h2 className="text-xl sm:text-2xl font-serif font-semibold text-amber-900 tracking-wide uppercase">
+          {title}
+        </h2>
+        <div className="h-px w-16 bg-gradient-to-l from-transparent via-amber-400/40 to-amber-400/60" />
+      </div>
+      {description && (
+        <p className="text-sm text-amber-700/60 italic font-light mt-1">{description}</p>
+      )}
+    </div>
+  );
+
+  const MenuItemRow = ({ item }: { item: MenuItem }) => (
+    <div className="py-3 group">
+      <div className="flex items-baseline gap-2">
+        <h3 className="font-serif text-base sm:text-lg font-medium text-amber-950 group-hover:text-amber-700 transition-colors">
+          {item.name}
+        </h3>
+        <div className="flex-1 border-b border-dotted border-amber-300/60 mx-2 mb-1" />
+        <span className="font-serif font-semibold text-amber-800 whitespace-nowrap">
+          UGX {formatCurrency(item.unit_price)}
+        </span>
+      </div>
+      {item.description && (
+        <p className="text-sm text-amber-700/70 italic mt-1 pl-0.5 leading-relaxed">
+          {item.description}
+        </p>
+      )}
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/30">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b">
-        <div className="max-w-2xl mx-auto p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold">{tenant.name}</h1>
-              {table && (
-                <p className="text-sm text-muted-foreground">
-                  Table {table.table_number} • {table.location}
-                </p>
-              )}
+    <div className="min-h-screen bg-[#faf8f5]">
+      {/* Elegant Menu Header */}
+      <div className="relative bg-gradient-to-b from-amber-950 via-amber-900 to-amber-800 text-white">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }} />
+        </div>
+        <div className="relative max-w-2xl mx-auto px-6 py-10 text-center">
+          {/* Decorative top element */}
+          <div className="flex justify-center mb-4">
+            <div className="flex items-center gap-2">
+              <div className="h-px w-8 bg-amber-400/60" />
+              <div className="w-2 h-2 rotate-45 border border-amber-400/60" />
+              <div className="h-px w-8 bg-amber-400/60" />
             </div>
-            <Badge variant="outline" className="text-xs">
-              Digital Menu
-            </Badge>
+          </div>
+          
+          <h1 className="text-3xl sm:text-4xl font-serif font-bold tracking-wider mb-2">
+            {tenant.name}
+          </h1>
+          
+          {table && (
+            <p className="text-amber-200/80 text-sm tracking-widest uppercase mt-3">
+              Table {table.table_number} • {table.location}
+            </p>
+          )}
+          
+          {/* Decorative bottom element */}
+          <div className="flex justify-center mt-6">
+            <div className="flex items-center gap-3">
+              <div className="h-px w-12 bg-gradient-to-r from-transparent to-amber-400/60" />
+              <UtensilsCrossed className="h-5 w-5 text-amber-400/80" />
+              <div className="h-px w-12 bg-gradient-to-l from-transparent to-amber-400/60" />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Menu Content */}
-      <div className="max-w-2xl mx-auto p-4 space-y-6 pb-8">
-        {categories && categories.length > 0 ? (
-          <>
-            {categories.map((category) => {
-              const items = getItemsByCategory(category.id);
-              if (items.length === 0) return null;
+      <div className="max-w-2xl mx-auto px-6 py-8">
+        {/* Menu border decoration */}
+        <div className="relative border-2 border-amber-200/60 rounded-sm p-6 sm:p-8 bg-white/50 shadow-sm">
+          {/* Corner decorations */}
+          <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-amber-400/50" />
+          <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-amber-400/50" />
+          <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-amber-400/50" />
+          <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-amber-400/50" />
 
-              return (
-                <div key={category.id}>
-                  <div className="sticky top-[73px] bg-background/95 backdrop-blur py-2 z-5">
-                    <h2 className="text-lg font-semibold">{category.name}</h2>
-                    {category.description && (
-                      <p className="text-sm text-muted-foreground">{category.description}</p>
-                    )}
+          {categories && categories.length > 0 ? (
+            <>
+              {categories.map((category, index) => {
+                const items = getItemsByCategory(category.id);
+                if (items.length === 0) return null;
+
+                return (
+                  <div key={category.id}>
+                    {index > 0 && <DecorativeDivider />}
+                    <CategoryDivider title={category.name} description={category.description} />
+                    <div className="space-y-1">
+                      {items.map((item) => (
+                        <MenuItemRow key={item.id} item={item} />
+                      ))}
+                    </div>
                   </div>
-                  <div className="space-y-3 mt-3">
-                    {items.map((item) => (
-                      <Card key={item.id} className="overflow-hidden">
-                        <CardContent className="p-4">
-                          <div className="flex justify-between items-start gap-4">
-                            <div className="flex-1">
-                              <h3 className="font-medium">{item.name}</h3>
-                              {item.description && (
-                                <p className="text-sm text-muted-foreground mt-1">
-                                  {item.description}
-                                </p>
-                              )}
-                            </div>
-                            <div className="text-right">
-                              <span className="font-bold text-primary">
-                                {formatCurrency(item.unit_price)}
-                              </span>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
+                );
+              })}
+
+              {/* Uncategorized items */}
+              {uncategorizedItems.length > 0 && (
+                <>
+                  {categories.length > 0 && <DecorativeDivider />}
+                  <CategoryDivider title="Specials" />
+                  <div className="space-y-1">
+                    {uncategorizedItems.map((item) => (
+                      <MenuItemRow key={item.id} item={item} />
                     ))}
                   </div>
-                </div>
-              );
-            })}
+                </>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-16">
+              <UtensilsCrossed className="h-16 w-16 mx-auto text-amber-400/60 mb-4" />
+              <p className="text-amber-700/70 font-serif italic text-lg">
+                Our menu is being prepared...
+              </p>
+              <p className="text-amber-600/50 text-sm mt-2">
+                Please check back soon
+              </p>
+            </div>
+          )}
 
-            {/* Uncategorized items */}
-            {uncategorizedItems.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold sticky top-[73px] bg-background/95 backdrop-blur py-2">
-                  Other Items
-                </h2>
-                <div className="space-y-3 mt-3">
-                  {uncategorizedItems.map((item) => (
-                    <Card key={item.id} className="overflow-hidden">
-                      <CardContent className="p-4">
-                        <div className="flex justify-between items-start gap-4">
-                          <div className="flex-1">
-                            <h3 className="font-medium">{item.name}</h3>
-                            {item.description && (
-                              <p className="text-sm text-muted-foreground mt-1">
-                                {item.description}
-                              </p>
-                            )}
-                          </div>
-                          <div className="text-right">
-                            <span className="font-bold text-primary">
-                              {formatCurrency(item.unit_price)}
-                            </span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+          {/* Menu footer decoration */}
+          <div className="mt-10 pt-6 border-t border-amber-200/40">
+            <div className="flex justify-center">
+              <div className="flex items-center gap-3">
+                <div className="h-px w-8 bg-amber-300/40" />
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-400/60" />
+                <div className="h-px w-8 bg-amber-300/40" />
               </div>
-            )}
-          </>
-        ) : (
-          <div className="text-center py-12">
-            <UtensilsCrossed className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">No menu items available</p>
+            </div>
+            <p className="text-center text-xs text-amber-600/50 mt-4 tracking-widest uppercase">
+              Thank you for dining with us
+            </p>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Footer */}
-      <div className="border-t bg-muted/30 py-4">
-        <p className="text-center text-xs text-muted-foreground">
+      <div className="py-6 text-center">
+        <p className="text-xs text-amber-700/40 tracking-wider">
           Powered by Kabit POS
         </p>
       </div>
