@@ -142,7 +142,7 @@ export default function KitchenDisplay() {
           {/* Pending Orders */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <Bell className="h-5 w-5 text-orange-500" />
+              <Bell className="h-5 w-5 text-destructive" />
               <h2 className="text-lg font-semibold">New Orders ({pendingOrders.length})</h2>
             </div>
             <div className="space-y-4">
