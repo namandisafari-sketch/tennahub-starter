@@ -1,9 +1,12 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UtensilsCrossed, Sparkles } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { UtensilsCrossed, Sparkles, WifiOff, RefreshCw } from "lucide-react";
+import { useOfflineMenu } from "@/hooks/use-offline-menu";
 
 interface MenuItem {
   id: string;
@@ -23,8 +26,9 @@ interface Category {
 
 const PublicMenu = () => {
   const { tenantId, tableId } = useParams();
+  const { isOnline, cachedData, cacheMenuData, getCacheAge, hasCachedData } = useOfflineMenu(tenantId, tableId);
 
-  const { data: tenant, isLoading: tenantLoading } = useQuery({
+  const { data: tenant, isLoading: tenantLoading, error: tenantError } = useQuery({
     queryKey: ['public-tenant', tenantId],
     queryFn: async () => {
       if (!tenantId) return null;
@@ -36,10 +40,11 @@ const PublicMenu = () => {
       if (error) throw error;
       return data;
     },
-    enabled: !!tenantId,
+    enabled: !!tenantId && isOnline,
+    retry: isOnline ? 3 : 0,
   });
 
-  const { data: categories } = useQuery({
+  const { data: categories, error: categoriesError } = useQuery({
     queryKey: ['public-categories', tenantId],
     queryFn: async () => {
       if (!tenantId) return [];
@@ -52,10 +57,11 @@ const PublicMenu = () => {
       if (error) throw error;
       return data as Category[];
     },
-    enabled: !!tenantId,
+    enabled: !!tenantId && isOnline,
+    retry: isOnline ? 3 : 0,
   });
 
-  const { data: menuItems, isLoading: menuLoading } = useQuery({
+  const { data: menuItems, isLoading: menuLoading, error: menuError } = useQuery({
     queryKey: ['public-menu', tenantId],
     queryFn: async () => {
       if (!tenantId) return [];
@@ -68,7 +74,8 @@ const PublicMenu = () => {
       if (error) throw error;
       return data as MenuItem[];
     },
-    enabled: !!tenantId,
+    enabled: !!tenantId && isOnline,
+    retry: isOnline ? 3 : 0,
   });
 
   const { data: table } = useQuery({
@@ -83,8 +90,31 @@ const PublicMenu = () => {
       if (error) throw error;
       return data;
     },
-    enabled: !!tableId,
+    enabled: !!tableId && isOnline,
+    retry: isOnline ? 3 : 0,
   });
+
+  // Cache data when online and data is loaded
+  useEffect(() => {
+    if (isOnline && tenant && menuItems && categories) {
+      cacheMenuData({
+        tenant,
+        categories,
+        menuItems,
+        table: table || null,
+      });
+    }
+  }, [isOnline, tenant, menuItems, categories, table]);
+
+  // Use cached data when offline or when online data fails
+  const displayTenant = tenant || cachedData?.tenant;
+  const displayCategories = categories || cachedData?.categories || [];
+  const displayMenuItems = menuItems || cachedData?.menuItems || [];
+  const displayTable = table || cachedData?.table;
+
+  const isLoading = tenantLoading || menuLoading;
+  const hasError = tenantError || menuError || categoriesError;
+  const isUsingCache = !isOnline || (hasError && hasCachedData);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-UG', {
@@ -93,12 +123,13 @@ const PublicMenu = () => {
   };
 
   const getItemsByCategory = (categoryId: string) => {
-    return menuItems?.filter(item => item.category_id === categoryId) || [];
+    return displayMenuItems?.filter(item => item.category_id === categoryId) || [];
   };
 
-  const uncategorizedItems = menuItems?.filter(item => !item.category_id) || [];
+  const uncategorizedItems = displayMenuItems?.filter(item => !item.category_id) || [];
 
-  if (tenantLoading || menuLoading) {
+  // Show loading only when online and no cache
+  if (isLoading && !hasCachedData) {
     return (
       <div className="min-h-screen bg-[#faf8f5] p-6">
         <div className="max-w-2xl mx-auto space-y-6">
@@ -110,7 +141,31 @@ const PublicMenu = () => {
     );
   }
 
-  if (!tenant) {
+  // Show offline message if no data available
+  if (!displayTenant && !isOnline) {
+    return (
+      <div className="min-h-screen bg-[#faf8f5] flex items-center justify-center p-6">
+        <Card className="max-w-md w-full border-amber-200/50 bg-white/80 shadow-lg">
+          <CardContent className="pt-8 text-center">
+            <WifiOff className="h-16 w-16 mx-auto text-amber-600 mb-4" />
+            <h2 className="text-2xl font-serif font-semibold text-amber-900 mb-2">You're Offline</h2>
+            <p className="text-amber-700/70 mb-4">
+              Please connect to the internet to load the menu for the first time.
+            </p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Try Again
+            </button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!displayTenant) {
     return (
       <div className="min-h-screen bg-[#faf8f5] flex items-center justify-center p-6">
         <Card className="max-w-md w-full border-amber-200/50 bg-white/80 shadow-lg">
@@ -170,6 +225,19 @@ const PublicMenu = () => {
 
   return (
     <div className="min-h-screen bg-[#faf8f5]">
+      {/* Offline indicator */}
+      {isUsingCache && (
+        <div className="bg-amber-100 border-b border-amber-200 px-4 py-2">
+          <div className="max-w-2xl mx-auto flex items-center justify-center gap-2 text-sm text-amber-800">
+            <WifiOff className="h-4 w-4" />
+            <span>
+              {!isOnline ? "Offline mode" : "Using cached data"} 
+              {getCacheAge() && ` • Updated ${getCacheAge()}`}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Elegant Menu Header */}
       <div className="relative bg-gradient-to-b from-amber-950 via-amber-900 to-amber-800 text-white">
         <div className="absolute inset-0 opacity-10">
@@ -188,12 +256,12 @@ const PublicMenu = () => {
           </div>
           
           <h1 className="text-3xl sm:text-4xl font-serif font-bold tracking-wider mb-2">
-            {tenant.name}
+            {displayTenant.name}
           </h1>
           
-          {table && (
+          {displayTable && (
             <p className="text-amber-200/80 text-sm tracking-widest uppercase mt-3">
-              Table {table.table_number} • {table.location}
+              Table {displayTable.table_number} • {displayTable.location}
             </p>
           )}
           
@@ -218,9 +286,9 @@ const PublicMenu = () => {
           <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-amber-400/50" />
           <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-amber-400/50" />
 
-          {categories && categories.length > 0 ? (
+          {displayCategories && displayCategories.length > 0 ? (
             <>
-              {categories.map((category, index) => {
+              {displayCategories.map((category, index) => {
                 const items = getItemsByCategory(category.id);
                 if (items.length === 0) return null;
 
@@ -240,7 +308,7 @@ const PublicMenu = () => {
               {/* Uncategorized items */}
               {uncategorizedItems.length > 0 && (
                 <>
-                  {categories.length > 0 && <DecorativeDivider />}
+                  {displayCategories.length > 0 && <DecorativeDivider />}
                   <CategoryDivider title="Specials" />
                   <div className="space-y-1">
                     {uncategorizedItems.map((item) => (
