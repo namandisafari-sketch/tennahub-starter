@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useTenant } from "@/hooks/use-tenant";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
-import { ChefHat, Clock, CheckCircle, UtensilsCrossed, Timer, Bell } from "lucide-react";
+import { ChefHat, Clock, CheckCircle, UtensilsCrossed, Timer, Bell, Maximize, Minimize } from "lucide-react";
 
 interface SaleItem {
   quantity: number;
@@ -30,6 +30,25 @@ export default function KitchenDisplay() {
   const tenantId = tenantData?.tenantId;
   const queryClient = useQueryClient();
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Handle fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = useCallback(async () => {
+    if (!document.fullscreenElement) {
+      await containerRef.current?.requestFullscreen();
+    } else {
+      await document.exitFullscreen();
+    }
+  }, []);
 
   // Update clock every second
   useEffect(() => {
@@ -106,7 +125,10 @@ export default function KitchenDisplay() {
   }
 
   return (
-    <div className="space-y-6">
+    <div 
+      ref={containerRef} 
+      className={`space-y-6 ${isFullscreen ? 'bg-background p-6 overflow-auto h-screen' : ''}`}
+    >
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -120,13 +142,23 @@ export default function KitchenDisplay() {
             </p>
           </div>
         </div>
-        <div className="text-right">
-          <div className="text-2xl font-mono font-bold">
-            {currentTime.toLocaleTimeString()}
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <div className="text-2xl font-mono font-bold">
+              {currentTime.toLocaleTimeString()}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {currentTime.toLocaleDateString()}
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            {currentTime.toLocaleDateString()}
-          </p>
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          >
+            {isFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+          </Button>
         </div>
       </div>
 
