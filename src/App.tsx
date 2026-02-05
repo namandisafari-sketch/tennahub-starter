@@ -150,6 +150,7 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <ScrollProgressIndicator />
           <PWAInstallPrompt />
           <InstallPrompt />
           <BrowserRouter>
