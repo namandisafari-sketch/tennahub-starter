@@ -125,7 +125,10 @@ export default function KitchenDisplay() {
   }
 
   return (
-    <div className="space-y-6">
+    <div 
+      ref={containerRef} 
+      className={`space-y-6 ${isFullscreen ? 'bg-background p-6 overflow-auto h-screen' : ''}`}
+    >
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
