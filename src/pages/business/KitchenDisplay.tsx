@@ -234,7 +234,7 @@ export default function KitchenDisplay() {
                         </Badge>
                       </div>
                     </div>
-                    {order.table_number && (
+                    {order.notes && (
                       <p className="text-sm text-muted-foreground">
                         Table {order.table_number}
                       </p>
