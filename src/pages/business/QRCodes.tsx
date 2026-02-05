@@ -6,14 +6,17 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useTenant } from "@/hooks/use-tenant";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, Download, Printer, ExternalLink, Bug, TableIcon } from "lucide-react";
+import { QrCode, Download, Printer, ExternalLink, Bug, TableIcon, WifiOff, FileDown, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { fetchMenuData, generateOfflineMenuHTML, downloadOfflineMenu } from "@/lib/offline-menu-generator";
 
 const QRCodes = () => {
   const { data: tenant } = useTenant();
   const [selectedTableId, setSelectedTableId] = useState<string>("");
+  const [generatingOffline, setGeneratingOffline] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
   const tableQrRef = useRef<HTMLDivElement>(null);
 
@@ -116,6 +119,32 @@ const QRCodes = () => {
     printWindow.document.close();
   };
 
+  const handleDownloadOfflineMenu = async (tableId?: string) => {
+    if (!tenant?.tenantId) return;
+    
+    setGeneratingOffline(true);
+    try {
+      const menuData = await fetchMenuData(tenant.tenantId, tableId);
+      if (!menuData) {
+        toast.error("Failed to fetch menu data");
+        return;
+      }
+
+      const html = generateOfflineMenuHTML(menuData);
+      const filename = tableId && selectedTable 
+        ? `menu-table-${selectedTable.table_number}` 
+        : 'menu-offline';
+      
+      downloadOfflineMenu(html, filename);
+      toast.success("Offline menu downloaded! Host this file locally for customers without internet.");
+    } catch (error) {
+      console.error("Error generating offline menu:", error);
+      toast.error("Failed to generate offline menu");
+    } finally {
+      setGeneratingOffline(false);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
@@ -140,6 +169,10 @@ const QRCodes = () => {
         <TabsList>
           <TabsTrigger value="general">General Menu QR</TabsTrigger>
           <TabsTrigger value="tables">Table-Specific QR</TabsTrigger>
+          <TabsTrigger value="offline">
+            <WifiOff className="h-4 w-4 mr-1.5" />
+            Offline Menu
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="general">
@@ -364,6 +397,130 @@ const QRCodes = () => {
                     <p>No tables found. Add tables in the Tables section first.</p>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="offline">
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <WifiOff className="h-5 w-5" />
+                  Offline Menu File
+                </CardTitle>
+                <CardDescription>
+                  Download a standalone HTML file that works without internet. Perfect for areas with poor connectivity.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="p-6 border-2 border-dashed rounded-lg text-center space-y-4">
+                  <div className="h-16 w-16 rounded-full bg-primary/10 mx-auto flex items-center justify-center">
+                    <FileDown className="h-8 w-8 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Generate Offline Menu</p>
+                    <p className="text-sm text-muted-foreground">
+                      Creates a self-contained HTML file with your current menu
+                    </p>
+                  </div>
+                  <Button 
+                    onClick={() => handleDownloadOfflineMenu()}
+                    disabled={generatingOffline || !tenant?.tenantId}
+                    className="w-full"
+                  >
+                    {generatingOffline ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-4 w-4 mr-2" />
+                        Download Offline Menu
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {selectedTableId && (
+                  <Button 
+                    variant="outline"
+                    onClick={() => handleDownloadOfflineMenu(selectedTableId)}
+                    disabled={generatingOffline}
+                    className="w-full"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download for Table {selectedTable?.table_number}
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>How Offline Menu Works</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex gap-3">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                      1
+                    </div>
+                    <div>
+                      <p className="font-medium">Download the HTML File</p>
+                      <p className="text-sm text-muted-foreground">
+                        Get a self-contained menu file with all styling included
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                      2
+                    </div>
+                    <div>
+                      <p className="font-medium">Host Locally</p>
+                      <p className="text-sm text-muted-foreground">
+                        Put the file on a local device, router, or use a phone hotspot
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                      3
+                    </div>
+                    <div>
+                      <p className="font-medium">Create Local QR</p>
+                      <p className="text-sm text-muted-foreground">
+                        Point your QR code to the local file URL (e.g., 192.168.1.1/menu.html)
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                      4
+                    </div>
+                    <div>
+                      <p className="font-medium">Works Without Internet!</p>
+                      <p className="text-sm text-muted-foreground">
+                        Customers connect to local WiFi and access menu instantly
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+                  <p className="text-sm text-amber-800 dark:text-amber-200">
+                    <strong>💡 Tip:</strong> Use a cheap WiFi router or old phone as a hotspot. The menu file is tiny (&lt;50KB) and loads instantly!
+                  </p>
+                </div>
+
+                <div className="p-4 bg-muted rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Note:</strong> Re-download the offline menu whenever you update prices or add new items.
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </div>
