@@ -199,6 +199,7 @@ const App = () => {
                 <Route path="sales" element={<Sales />} />
                 <Route path="menu" element={<Menu />} />
                 <Route path="tables" element={<Tables />} />
+                <Route path="kitchen" element={<KitchenDisplay />} />
                 <Route path="qr-codes" element={<QRCodes />} />
                 <Route path="customers" element={<Customers />} />
                 <Route path="employees" element={<Employees />} />
