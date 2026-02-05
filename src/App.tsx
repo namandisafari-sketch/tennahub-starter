@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { ScrollProgressIndicator } from "@/components/ScrollProgressIndicator";
 import { useWelcomeNotifications } from "@/hooks/use-welcome-notifications";
 import { ProtectedAdminRoute } from "@/components/ProtectedAdminRoute";
 import PWAHome from "./pages/PWAHome";
