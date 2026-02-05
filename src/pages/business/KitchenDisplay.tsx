@@ -179,10 +179,10 @@ export default function KitchenDisplay() {
                   <CardContent>
                     <Separator className="mb-3" />
                     <div className="space-y-2 mb-4">
-                      {(order.items || []).map((item, idx) => (
+                      {(order.sale_items || []).map((item, idx) => (
                         <div key={idx} className="flex justify-between text-sm">
                           <span className="font-medium">
-                            {item.quantity}x {item.name}
+                            {item.quantity}x {item.products?.name || 'Unknown Item'}
                           </span>
                         </div>
                       ))}
