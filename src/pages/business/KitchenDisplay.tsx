@@ -142,13 +142,23 @@ export default function KitchenDisplay() {
             </p>
           </div>
         </div>
-        <div className="text-right">
-          <div className="text-2xl font-mono font-bold">
-            {currentTime.toLocaleTimeString()}
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <div className="text-2xl font-mono font-bold">
+              {currentTime.toLocaleTimeString()}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {currentTime.toLocaleDateString()}
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            {currentTime.toLocaleDateString()}
-          </p>
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          >
+            {isFullscreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+          </Button>
         </div>
       </div>
 
