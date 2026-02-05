@@ -17,17 +17,17 @@ interface OrderItem {
 
 interface Order {
   id: string;
-  order_number: number;
-  order_type: string;
-  table_number: string | null;
-  status: string;
-  items: OrderItem[];
+  order_number: number | null;
+  order_type: string | null;
+  order_status: string | null;
+  items: OrderItem[] | null;
   created_at: string;
   total_amount: number;
+  notes: string | null;
 }
 
 export default function KitchenDisplay() {
-  const { tenant } = useTenant();
+  const { tenantId } = useTenant();
   const queryClient = useQueryClient();
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -39,21 +39,21 @@ export default function KitchenDisplay() {
 
   // Fetch active orders
   const { data: orders = [], isLoading } = useQuery({
-    queryKey: ['kitchen-orders', tenant?.id],
+    queryKey: ['kitchen-orders', tenantId],
     queryFn: async () => {
-      if (!tenant?.id) return [];
+      if (!tenantId) return [];
       
       const { data, error } = await supabase
         .from('sales')
-        .select('id, order_number, order_type, table_number, status, items, created_at, total_amount')
-        .eq('tenant_id', tenant.id)
-        .in('status', ['pending', 'preparing'])
+        .select('id, order_number, order_type, order_status, items, created_at, total_amount, notes')
+        .eq('tenant_id', tenantId)
+        .in('order_status', ['pending', 'preparing'])
         .order('created_at', { ascending: true });
       
       if (error) throw error;
-      return (data || []) as Order[];
+      return (data || []) as unknown as Order[];
     },
-    enabled: !!tenant?.id,
+    enabled: !!tenantId,
     refetchInterval: 5000, // Auto-refresh every 5 seconds
   });
 
@@ -62,7 +62,7 @@ export default function KitchenDisplay() {
     mutationFn: async ({ orderId, newStatus }: { orderId: string; newStatus: string }) => {
       const { error } = await supabase
         .from('sales')
-        .update({ status: newStatus })
+        .update({ order_status: newStatus })
         .eq('id', orderId);
       
       if (error) throw error;
