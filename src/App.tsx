@@ -48,6 +48,7 @@ import Branches from "./pages/business/Branches";
 import BusinessSettings from "./pages/business/BusinessSettings";
 import Tables from "./pages/business/Tables";
 import Menu from "./pages/business/Menu";
+import KitchenDisplay from "./pages/business/KitchenDisplay";
 import QRCodes from "./pages/business/QRCodes";
 import POS from "./pages/business/POS";
 import Expenses from "./pages/business/Expenses";
