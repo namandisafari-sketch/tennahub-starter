@@ -9,10 +9,9 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 import { ChefHat, Clock, CheckCircle, UtensilsCrossed, Timer, Bell } from "lucide-react";
 
-interface OrderItem {
-  name: string;
+interface SaleItem {
   quantity: number;
-  unit_price: number;
+  products: { name: string } | null;
 }
 
 interface Order {
@@ -20,7 +19,7 @@ interface Order {
   order_number: number | null;
   order_type: string | null;
   order_status: string | null;
-  items: OrderItem[] | null;
+  sale_items: SaleItem[];
   created_at: string;
   total_amount: number;
   notes: string | null;
@@ -38,7 +37,7 @@ export default function KitchenDisplay() {
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch active orders
+  // Fetch active orders with their items
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['kitchen-orders', tenantId],
     queryFn: async () => {
@@ -46,7 +45,10 @@ export default function KitchenDisplay() {
       
       const { data, error } = await supabase
         .from('sales')
-        .select('id, order_number, order_type, order_status, items, created_at, total_amount, notes')
+        .select(`
+          id, order_number, order_type, order_status, created_at, total_amount, notes,
+          sale_items(quantity, products(name))
+        `)
         .eq('tenant_id', tenantId)
         .in('order_status', ['pending', 'preparing'])
         .order('created_at', { ascending: true });
