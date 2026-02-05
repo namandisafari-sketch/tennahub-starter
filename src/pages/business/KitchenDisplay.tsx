@@ -91,8 +91,8 @@ export default function KitchenDisplay() {
     return 'border-border';
   };
 
-  const pendingOrders = orders.filter(o => o.status === 'pending');
-  const preparingOrders = orders.filter(o => o.status === 'preparing');
+  const pendingOrders = orders.filter(o => o.order_status === 'pending');
+  const preparingOrders = orders.filter(o => o.order_status === 'preparing');
 
   if (isLoading) {
     return (
