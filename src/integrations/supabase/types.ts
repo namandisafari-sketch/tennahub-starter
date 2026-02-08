@@ -2267,6 +2267,211 @@ export type Database = {
           },
         ]
       }
+      rental_properties: {
+        Row: {
+          address: string | null
+          amenities: Json | null
+          city: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          property_type: string
+          tenant_id: string
+          total_units: number
+          updated_at: string
+          year_built: number | null
+        }
+        Insert: {
+          address?: string | null
+          amenities?: Json | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          property_type?: string
+          tenant_id: string
+          total_units?: number
+          updated_at?: string
+          year_built?: number | null
+        }
+        Update: {
+          address?: string | null
+          amenities?: Json | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          property_type?: string
+          tenant_id?: string
+          total_units?: number
+          updated_at?: string
+          year_built?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_properties_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rental_tenants: {
+        Row: {
+          created_at: string
+          email: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          employer: string | null
+          full_name: string
+          id: string
+          id_number: string | null
+          id_type: string | null
+          is_active: boolean | null
+          monthly_income: number | null
+          notes: string | null
+          occupation: string | null
+          phone: string | null
+          previous_address: string | null
+          previous_landlord_contact: string | null
+          status: string
+          tenant_id: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          employer?: string | null
+          full_name: string
+          id?: string
+          id_number?: string | null
+          id_type?: string | null
+          is_active?: boolean | null
+          monthly_income?: number | null
+          notes?: string | null
+          occupation?: string | null
+          phone?: string | null
+          previous_address?: string | null
+          previous_landlord_contact?: string | null
+          status?: string
+          tenant_id: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          employer?: string | null
+          full_name?: string
+          id?: string
+          id_number?: string | null
+          id_type?: string | null
+          is_active?: boolean | null
+          monthly_income?: number | null
+          notes?: string | null
+          occupation?: string | null
+          phone?: string | null
+          previous_address?: string | null
+          previous_landlord_contact?: string | null
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_tenants_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rental_units: {
+        Row: {
+          amenities: Json | null
+          bathrooms: number | null
+          bedrooms: number | null
+          created_at: string
+          deposit_amount: number | null
+          floor_number: number | null
+          id: string
+          is_active: boolean | null
+          monthly_rent: number
+          property_id: string
+          size_sqm: number | null
+          status: string
+          tenant_id: string
+          unit_number: string
+          unit_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          amenities?: Json | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          created_at?: string
+          deposit_amount?: number | null
+          floor_number?: number | null
+          id?: string
+          is_active?: boolean | null
+          monthly_rent?: number
+          property_id: string
+          size_sqm?: number | null
+          status?: string
+          tenant_id: string
+          unit_number: string
+          unit_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amenities?: Json | null
+          bathrooms?: number | null
+          bedrooms?: number | null
+          created_at?: string
+          deposit_amount?: number | null
+          floor_number?: number | null
+          id?: string
+          is_active?: boolean | null
+          monthly_rent?: number
+          property_id?: string
+          size_sqm?: number | null
+          status?: string
+          tenant_id?: string
+          unit_number?: string
+          unit_type?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_units_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "rental_properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rental_units_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       repair_job_items: {
         Row: {
           created_at: string
