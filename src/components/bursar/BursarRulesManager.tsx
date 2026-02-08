@@ -76,14 +76,18 @@ export function BursarRulesManager() {
         .from("bursar_rules")
         .select(`
           *,
-          school_classes!class_id (name),
-          term_requirements (name)
+          school_classes!class_id (name)
         `)
         .eq("tenant_id", tenantId)
         .order("priority", { ascending: true });
 
       if (error) throw error;
-      return data as BursarRule[];
+      
+      // Map data to include term_requirements placeholder
+      return (data || []).map(rule => ({
+        ...rule,
+        term_requirements: null
+      })) as unknown as BursarRule[];
     },
     enabled: !!tenantId,
   });

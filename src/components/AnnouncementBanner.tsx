@@ -42,15 +42,13 @@ export function AnnouncementBanner() {
       .from('announcements')
       .select('id, title, content, priority')
       .eq('is_active', true)
-      .not('published_at', 'is', null)
-      .order('priority', { ascending: true })
-      .order('published_at', { ascending: false });
+      .order('priority', { ascending: true });
 
     if (data) {
       // Load dismissed announcements from localStorage
       const dismissedIds = JSON.parse(localStorage.getItem('dismissed_announcements') || '[]');
       setDismissed(new Set(dismissedIds));
-      setAnnouncements(data);
+      setAnnouncements(data as unknown as Announcement[]);
     }
   };
 
