@@ -124,6 +124,7 @@ export type Database = {
           ends_at: string | null
           id: string
           is_active: boolean | null
+          priority: number | null
           starts_at: string | null
           target_business_types: string[] | null
           target_roles: string[] | null
@@ -136,6 +137,7 @@ export type Database = {
           ends_at?: string | null
           id?: string
           is_active?: boolean | null
+          priority?: number | null
           starts_at?: string | null
           target_business_types?: string[] | null
           target_roles?: string[] | null
@@ -148,6 +150,7 @@ export type Database = {
           ends_at?: string | null
           id?: string
           is_active?: boolean | null
+          priority?: number | null
           starts_at?: string | null
           target_business_types?: string[] | null
           target_roles?: string[] | null
@@ -393,6 +396,66 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      chart_of_accounts: {
+        Row: {
+          account_code: string
+          account_name: string
+          account_type: string
+          balance: number | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          parent_id: string | null
+          sub_type: string | null
+          tenant_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          account_code: string
+          account_name: string
+          account_type: string
+          balance?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          parent_id?: string | null
+          sub_type?: string | null
+          tenant_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          account_code?: string
+          account_name?: string
+          account_type?: string
+          balance?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          parent_id?: string | null
+          sub_type?: string | null
+          tenant_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chart_of_accounts_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "chart_of_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chart_of_accounts_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       customer_payments: {
         Row: {
@@ -1370,46 +1433,58 @@ export type Database = {
         Row: {
           approved_at: string | null
           approved_by: string | null
+          blocking_reason: string | null
           blocking_reasons: string[] | null
           created_at: string | null
           gate_checkin_id: string | null
           id: string
+          override_reason: string | null
           reason: string
           requested_at: string | null
           requested_by: string | null
+          reviewer_notes: string | null
           status: string | null
           student_id: string
           tenant_id: string
+          valid_for_date: string | null
           valid_until: string | null
         }
         Insert: {
           approved_at?: string | null
           approved_by?: string | null
+          blocking_reason?: string | null
           blocking_reasons?: string[] | null
           created_at?: string | null
           gate_checkin_id?: string | null
           id?: string
+          override_reason?: string | null
           reason: string
           requested_at?: string | null
           requested_by?: string | null
+          reviewer_notes?: string | null
           status?: string | null
           student_id: string
           tenant_id: string
+          valid_for_date?: string | null
           valid_until?: string | null
         }
         Update: {
           approved_at?: string | null
           approved_by?: string | null
+          blocking_reason?: string | null
           blocking_reasons?: string[] | null
           created_at?: string | null
           gate_checkin_id?: string | null
           id?: string
+          override_reason?: string | null
           reason?: string
           requested_at?: string | null
           requested_by?: string | null
+          reviewer_notes?: string | null
           status?: string | null
           student_id?: string
           tenant_id?: string
+          valid_for_date?: string | null
           valid_until?: string | null
         }
         Relationships: [
@@ -1666,6 +1741,101 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "rental_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      letter_settings: {
+        Row: {
+          created_at: string | null
+          custom_footer_image_url: string | null
+          custom_header_image_url: string | null
+          font_family: string | null
+          font_size: number | null
+          footer_text: string | null
+          header_text: string | null
+          id: string
+          line_spacing: number | null
+          logo_position: string | null
+          margin_bottom: number | null
+          margin_left: number | null
+          margin_right: number | null
+          margin_top: number | null
+          show_address: boolean | null
+          show_email: boolean | null
+          show_logo: boolean | null
+          show_phone: boolean | null
+          show_school_name: boolean | null
+          show_signature_line: boolean | null
+          show_stamp_area: boolean | null
+          signature_title: string | null
+          tenant_id: string
+          updated_at: string | null
+          use_custom_footer: boolean | null
+          use_custom_header: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          custom_footer_image_url?: string | null
+          custom_header_image_url?: string | null
+          font_family?: string | null
+          font_size?: number | null
+          footer_text?: string | null
+          header_text?: string | null
+          id?: string
+          line_spacing?: number | null
+          logo_position?: string | null
+          margin_bottom?: number | null
+          margin_left?: number | null
+          margin_right?: number | null
+          margin_top?: number | null
+          show_address?: boolean | null
+          show_email?: boolean | null
+          show_logo?: boolean | null
+          show_phone?: boolean | null
+          show_school_name?: boolean | null
+          show_signature_line?: boolean | null
+          show_stamp_area?: boolean | null
+          signature_title?: string | null
+          tenant_id: string
+          updated_at?: string | null
+          use_custom_footer?: boolean | null
+          use_custom_header?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          custom_footer_image_url?: string | null
+          custom_header_image_url?: string | null
+          font_family?: string | null
+          font_size?: number | null
+          footer_text?: string | null
+          header_text?: string | null
+          id?: string
+          line_spacing?: number | null
+          logo_position?: string | null
+          margin_bottom?: number | null
+          margin_left?: number | null
+          margin_right?: number | null
+          margin_top?: number | null
+          show_address?: boolean | null
+          show_email?: boolean | null
+          show_logo?: boolean | null
+          show_phone?: boolean | null
+          show_school_name?: boolean | null
+          show_signature_line?: boolean | null
+          show_stamp_area?: boolean | null
+          signature_title?: string | null
+          tenant_id?: string
+          updated_at?: string | null
+          use_custom_footer?: boolean | null
+          use_custom_header?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "letter_settings_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -2682,9 +2852,24 @@ export type Database = {
           footer_text: string | null
           header_text: string | null
           id: string
+          include_qr_code: boolean | null
+          logo_alignment: string | null
+          next_receipt_number: number | null
+          paper_size: string | null
+          receipt_prefix: string | null
+          show_address: boolean | null
+          show_balance: boolean | null
+          show_cashier: boolean | null
+          show_class: boolean | null
+          show_date: boolean | null
+          show_email: boolean | null
           show_header: boolean | null
           show_logo: boolean | null
+          show_payment_method: boolean | null
+          show_phone: boolean | null
           show_stamp_area: boolean | null
+          show_student_info: boolean | null
+          show_time: boolean | null
           stamp_title: string | null
           tenant_id: string
           updated_at: string | null
@@ -2694,9 +2879,24 @@ export type Database = {
           footer_text?: string | null
           header_text?: string | null
           id?: string
+          include_qr_code?: boolean | null
+          logo_alignment?: string | null
+          next_receipt_number?: number | null
+          paper_size?: string | null
+          receipt_prefix?: string | null
+          show_address?: boolean | null
+          show_balance?: boolean | null
+          show_cashier?: boolean | null
+          show_class?: boolean | null
+          show_date?: boolean | null
+          show_email?: boolean | null
           show_header?: boolean | null
           show_logo?: boolean | null
+          show_payment_method?: boolean | null
+          show_phone?: boolean | null
           show_stamp_area?: boolean | null
+          show_student_info?: boolean | null
+          show_time?: boolean | null
           stamp_title?: string | null
           tenant_id: string
           updated_at?: string | null
@@ -2706,9 +2906,24 @@ export type Database = {
           footer_text?: string | null
           header_text?: string | null
           id?: string
+          include_qr_code?: boolean | null
+          logo_alignment?: string | null
+          next_receipt_number?: number | null
+          paper_size?: string | null
+          receipt_prefix?: string | null
+          show_address?: boolean | null
+          show_balance?: boolean | null
+          show_cashier?: boolean | null
+          show_class?: boolean | null
+          show_date?: boolean | null
+          show_email?: boolean | null
           show_header?: boolean | null
           show_logo?: boolean | null
+          show_payment_method?: boolean | null
+          show_phone?: boolean | null
           show_stamp_area?: boolean | null
+          show_student_info?: boolean | null
+          show_time?: boolean | null
           stamp_title?: string | null
           tenant_id?: string
           updated_at?: string | null
@@ -4367,6 +4582,7 @@ export type Database = {
           id: string
           is_active: boolean
           profile_id: string
+          staff_type: string | null
           tenant_id: string
           updated_at: string
         }
@@ -4378,6 +4594,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           profile_id: string
+          staff_type?: string | null
           tenant_id: string
           updated_at?: string
         }
@@ -4389,6 +4606,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           profile_id?: string
+          staff_type?: string | null
           tenant_id?: string
           updated_at?: string
         }
@@ -5146,6 +5364,7 @@ export type Database = {
           business_type: string | null
           created_at: string | null
           email: string | null
+          fee_balance_threshold: number | null
           id: string
           is_trial: boolean | null
           late_arrival_minutes: number | null
@@ -5174,6 +5393,7 @@ export type Database = {
           business_type?: string | null
           created_at?: string | null
           email?: string | null
+          fee_balance_threshold?: number | null
           id?: string
           is_trial?: boolean | null
           late_arrival_minutes?: number | null
@@ -5202,6 +5422,7 @@ export type Database = {
           business_type?: string | null
           created_at?: string | null
           email?: string | null
+          fee_balance_threshold?: number | null
           id?: string
           is_trial?: boolean | null
           late_arrival_minutes?: number | null
@@ -5329,6 +5550,59 @@ export type Database = {
             foreignKeyName: "testimonials_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      uneb_school_settings: {
+        Row: {
+          contact_email: string | null
+          contact_person: string | null
+          contact_phone: string | null
+          created_at: string | null
+          examination_body: string | null
+          id: string
+          is_registered: boolean | null
+          registration_year: number | null
+          school_center_number: string | null
+          school_name: string | null
+          tenant_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          examination_body?: string | null
+          id?: string
+          is_registered?: boolean | null
+          registration_year?: number | null
+          school_center_number?: string | null
+          school_name?: string | null
+          tenant_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          examination_body?: string | null
+          id?: string
+          is_registered?: boolean | null
+          registration_year?: number | null
+          school_center_number?: string | null
+          school_name?: string | null
+          tenant_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uneb_school_settings_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
             referencedRelation: "tenants"
             referencedColumns: ["id"]
           },

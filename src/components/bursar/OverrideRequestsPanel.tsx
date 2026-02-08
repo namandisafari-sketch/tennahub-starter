@@ -26,12 +26,14 @@ import { cn } from "@/lib/utils";
 interface OverrideRequest {
   id: string;
   student_id: string;
-  blocking_reason: string;
-  override_reason: string;
+  blocking_reason: string | null;
+  override_reason: string | null;
+  reason: string;
   requested_at: string;
   status: string;
-  valid_for_date: string;
+  valid_for_date: string | null;
   reviewer_notes: string | null;
+  blocking_reasons: string[] | null;
   students: {
     full_name: string;
     admission_number: string;
@@ -85,7 +87,14 @@ export function OverrideRequestsPanel({
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as OverrideRequest[];
+      // Map database fields to interface
+      return (data || []).map(item => ({
+        ...item,
+        blocking_reason: item.blocking_reason || (item.blocking_reasons?.join(', ') || null),
+        override_reason: item.override_reason || item.reason || null,
+        valid_for_date: item.valid_for_date || null,
+        reviewer_notes: item.reviewer_notes || null,
+      })) as unknown as OverrideRequest[];
     },
     enabled: !!tenantId,
     refetchInterval: 5000,
