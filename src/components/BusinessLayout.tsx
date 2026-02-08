@@ -117,17 +117,15 @@ export function BusinessLayout() {
   };
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={!isFullscreen}>
       <div 
         ref={containerRef}
         className={`min-h-screen flex w-full bg-background relative ${isFullscreen ? 'fullscreen-mode' : ''}`}
       >
-        {/* Desktop sidebar - hidden on mobile (screens < 768px) or in fullscreen */}
-        {!isFullscreen && (
-          <div className="hidden md:block">
-            <BusinessSidebar businessName={businessName} businessType={businessType} devMode={isDevMode} />
-          </div>
-        )}
+        {/* Desktop sidebar - always rendered so it can be toggled, hidden on mobile */}
+        <div className="hidden md:block">
+          <BusinessSidebar businessName={businessName} businessType={businessType} devMode={isDevMode} />
+        </div>
         
         <div className="flex-1 flex flex-col min-w-0">
           
