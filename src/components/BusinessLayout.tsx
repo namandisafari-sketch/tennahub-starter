@@ -133,7 +133,7 @@ export function BusinessLayout() {
           
           {/* Desktop header with sidebar trigger - always visible for nav access */}
           <header className="hidden md:flex h-14 border-b border-border items-center px-4 bg-card/95 backdrop-blur-sm sticky top-0 z-40">
-            {!isFullscreen && <SidebarTrigger className="touch-target" />}
+            <SidebarTrigger className="touch-target" />
             <div className="flex-1" />
             <div className="flex items-center gap-2">
               <NetworkStatusIndicator />
