@@ -6,11 +6,14 @@ import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { TermsFooterLink } from "@/components/TermsFooterLink";
 import { FullscreenToggle } from "@/components/FullscreenToggle";
+import { NetworkStatusIndicator } from "@/components/NetworkStatusIndicator";
+import { KeyboardShortcutsHelp } from "@/components/KeyboardShortcutsHelp";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useSubscriptionCheck } from "@/hooks/use-subscription-check";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useFullscreen } from "@/hooks/use-fullscreen";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 
 interface LocationState {
   devBusinessType?: string;
@@ -29,6 +32,9 @@ export function BusinessLayout() {
 
   // Check subscription status
   const { isExpired, isLoading: subscriptionLoading } = useSubscriptionCheck();
+  
+  // Enable keyboard shortcuts
+  const { shortcuts } = useKeyboardShortcuts(businessType);
 
   useEffect(() => {
     // Redirect to subscription expired page if subscription is expired
@@ -127,20 +133,25 @@ export function BusinessLayout() {
           {/* Announcement Banner - Hidden in fullscreen */}
           {!isFullscreen && <AnnouncementBanner />}
           
-          {/* Desktop header with sidebar trigger - hidden on mobile */}
-          <header className={`hidden md:flex h-14 border-b border-border items-center px-4 bg-card/95 backdrop-blur-sm sticky top-0 z-40 ${isFullscreen ? 'justify-end' : ''}`}>
+          {/* Desktop header with sidebar trigger - always visible for nav access */}
+          <header className="hidden md:flex h-14 border-b border-border items-center px-4 bg-card/95 backdrop-blur-sm sticky top-0 z-40">
             {!isFullscreen && <SidebarTrigger className="touch-target" />}
             <div className="flex-1" />
-            <FullscreenToggle isFullscreen={isFullscreen} onToggle={toggleFullscreen} />
+            <div className="flex items-center gap-2">
+              <NetworkStatusIndicator />
+              <KeyboardShortcutsHelp shortcuts={shortcuts} />
+              <FullscreenToggle isFullscreen={isFullscreen} onToggle={toggleFullscreen} />
+            </div>
           </header>
           
-          {/* Mobile header - shown only on mobile (screens < 768px), hidden in fullscreen */}
-          {!isFullscreen && (
-            <header className="flex md:hidden h-14 border-b border-border items-center justify-between px-4 bg-card/95 backdrop-blur-sm sticky top-0 z-40 safe-top">
-              <span className="font-semibold text-sm truncate">{businessName}</span>
+          {/* Mobile header - always visible for nav access */}
+          <header className="flex md:hidden h-14 border-b border-border items-center justify-between px-4 bg-card/95 backdrop-blur-sm sticky top-0 z-40 safe-top">
+            <span className="font-semibold text-sm truncate">{businessName}</span>
+            <div className="flex items-center gap-1">
+              <NetworkStatusIndicator />
               <FullscreenToggle isFullscreen={isFullscreen} onToggle={toggleFullscreen} />
-            </header>
-          )}
+            </div>
+          </header>
           
           {/* Main content - add bottom padding on mobile for bottom nav */}
           <main className={`flex-1 overflow-auto p-4 sm:p-6 ${isFullscreen ? 'p-6' : 'pb-24 md:pb-6'} safe-bottom`}>
@@ -148,12 +159,10 @@ export function BusinessLayout() {
           </main>
         </div>
         
-        {/* Mobile bottom navigation - only visible on mobile (screens < 768px), hidden in fullscreen */}
-        {!isFullscreen && (
-          <div className="block md:hidden">
-            <MobileBottomNav businessType={businessType} devMode={isDevMode} />
-          </div>
-        )}
+        {/* Mobile bottom navigation - always visible on mobile for nav access */}
+        <div className="block md:hidden">
+          <MobileBottomNav businessType={businessType} devMode={isDevMode} />
+        </div>
         
         {/* Terms & Conditions link for school businesses - positioned fixed */}
         {(businessType === 'school' || businessType === 'secondary_school' || businessType === 'kindergarten' || businessType === 'primary_school') && (
