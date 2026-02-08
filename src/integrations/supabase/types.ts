@@ -884,6 +884,7 @@ export type Database = {
           learning_area_id: string
           numeric_score: number | null
           rating_code: string | null
+          remark: string | null
           report_card_id: string
         }
         Insert: {
@@ -894,6 +895,7 @@ export type Database = {
           learning_area_id: string
           numeric_score?: number | null
           rating_code?: string | null
+          remark?: string | null
           report_card_id: string
         }
         Update: {
@@ -904,6 +906,7 @@ export type Database = {
           learning_area_id?: string
           numeric_score?: number | null
           rating_code?: string | null
+          remark?: string | null
           report_card_id?: string
         }
         Relationships: [
@@ -926,30 +929,42 @@ export type Database = {
       ecd_rating_scale: {
         Row: {
           code: string
+          color: string | null
           created_at: string | null
           description: string | null
           display_order: number | null
+          icon: string | null
           id: string
+          is_active: boolean | null
+          label: string | null
           name: string
           numeric_value: number | null
           tenant_id: string
         }
         Insert: {
           code: string
+          color?: string | null
           created_at?: string | null
           description?: string | null
           display_order?: number | null
+          icon?: string | null
           id?: string
+          is_active?: boolean | null
+          label?: string | null
           name: string
           numeric_value?: number | null
           tenant_id: string
         }
         Update: {
           code?: string
+          color?: string | null
           created_at?: string | null
           description?: string | null
           display_order?: number | null
+          icon?: string | null
           id?: string
+          is_active?: boolean | null
+          label?: string | null
           name?: string
           numeric_value?: number | null
           tenant_id?: string
@@ -972,6 +987,7 @@ export type Database = {
           class_teacher_comment: string | null
           class_teacher_name: string | null
           created_at: string | null
+          days_present: number | null
           fees_balance: number | null
           head_teacher_comment: string | null
           head_teacher_name: string | null
@@ -983,9 +999,12 @@ export type Database = {
           published_at: string | null
           status: string | null
           student_id: string
+          teacher_comment: string | null
+          teacher_name: string | null
           tenant_id: string
           term_closing_date: string | null
           term_id: string
+          total_school_days: number | null
           total_score: number | null
           total_students_in_class: number | null
           updated_at: string | null
@@ -997,6 +1016,7 @@ export type Database = {
           class_teacher_comment?: string | null
           class_teacher_name?: string | null
           created_at?: string | null
+          days_present?: number | null
           fees_balance?: number | null
           head_teacher_comment?: string | null
           head_teacher_name?: string | null
@@ -1008,9 +1028,12 @@ export type Database = {
           published_at?: string | null
           status?: string | null
           student_id: string
+          teacher_comment?: string | null
+          teacher_name?: string | null
           tenant_id: string
           term_closing_date?: string | null
           term_id: string
+          total_school_days?: number | null
           total_score?: number | null
           total_students_in_class?: number | null
           updated_at?: string | null
@@ -1022,6 +1045,7 @@ export type Database = {
           class_teacher_comment?: string | null
           class_teacher_name?: string | null
           created_at?: string | null
+          days_present?: number | null
           fees_balance?: number | null
           head_teacher_comment?: string | null
           head_teacher_name?: string | null
@@ -1033,9 +1057,12 @@ export type Database = {
           published_at?: string | null
           status?: string | null
           student_id?: string
+          teacher_comment?: string | null
+          teacher_name?: string | null
           tenant_id?: string
           term_closing_date?: string | null
           term_id?: string
+          total_school_days?: number | null
           total_score?: number | null
           total_students_in_class?: number | null
           updated_at?: string | null
@@ -2849,6 +2876,7 @@ export type Database = {
       receipt_settings: {
         Row: {
           created_at: string | null
+          footer_message: string | null
           footer_text: string | null
           header_text: string | null
           id: string
@@ -2857,25 +2885,33 @@ export type Database = {
           next_receipt_number: number | null
           paper_size: string | null
           receipt_prefix: string | null
+          seasonal_remark: string | null
           show_address: boolean | null
           show_balance: boolean | null
           show_cashier: boolean | null
           show_class: boolean | null
+          show_customer: boolean | null
           show_date: boolean | null
+          show_date_time: boolean | null
           show_email: boolean | null
+          show_footer_message: boolean | null
           show_header: boolean | null
           show_logo: boolean | null
           show_payment_method: boolean | null
           show_phone: boolean | null
+          show_seasonal_remark: boolean | null
           show_stamp_area: boolean | null
           show_student_info: boolean | null
           show_time: boolean | null
+          show_whatsapp_qr: boolean | null
           stamp_title: string | null
           tenant_id: string
           updated_at: string | null
+          whatsapp_number: string | null
         }
         Insert: {
           created_at?: string | null
+          footer_message?: string | null
           footer_text?: string | null
           header_text?: string | null
           id?: string
@@ -2884,25 +2920,33 @@ export type Database = {
           next_receipt_number?: number | null
           paper_size?: string | null
           receipt_prefix?: string | null
+          seasonal_remark?: string | null
           show_address?: boolean | null
           show_balance?: boolean | null
           show_cashier?: boolean | null
           show_class?: boolean | null
+          show_customer?: boolean | null
           show_date?: boolean | null
+          show_date_time?: boolean | null
           show_email?: boolean | null
+          show_footer_message?: boolean | null
           show_header?: boolean | null
           show_logo?: boolean | null
           show_payment_method?: boolean | null
           show_phone?: boolean | null
+          show_seasonal_remark?: boolean | null
           show_stamp_area?: boolean | null
           show_student_info?: boolean | null
           show_time?: boolean | null
+          show_whatsapp_qr?: boolean | null
           stamp_title?: string | null
           tenant_id: string
           updated_at?: string | null
+          whatsapp_number?: string | null
         }
         Update: {
           created_at?: string | null
+          footer_message?: string | null
           footer_text?: string | null
           header_text?: string | null
           id?: string
@@ -2911,22 +2955,29 @@ export type Database = {
           next_receipt_number?: number | null
           paper_size?: string | null
           receipt_prefix?: string | null
+          seasonal_remark?: string | null
           show_address?: boolean | null
           show_balance?: boolean | null
           show_cashier?: boolean | null
           show_class?: boolean | null
+          show_customer?: boolean | null
           show_date?: boolean | null
+          show_date_time?: boolean | null
           show_email?: boolean | null
+          show_footer_message?: boolean | null
           show_header?: boolean | null
           show_logo?: boolean | null
           show_payment_method?: boolean | null
           show_phone?: boolean | null
+          show_seasonal_remark?: boolean | null
           show_stamp_area?: boolean | null
           show_student_info?: boolean | null
           show_time?: boolean | null
+          show_whatsapp_qr?: boolean | null
           stamp_title?: string | null
           tenant_id?: string
           updated_at?: string | null
+          whatsapp_number?: string | null
         }
         Relationships: [
           {
@@ -5029,6 +5080,7 @@ export type Database = {
       students: {
         Row: {
           admission_number: string | null
+          boarding_status: string | null
           class_id: string | null
           created_at: string | null
           date_of_birth: string | null
@@ -5043,6 +5095,7 @@ export type Database = {
         }
         Insert: {
           admission_number?: string | null
+          boarding_status?: string | null
           class_id?: string | null
           created_at?: string | null
           date_of_birth?: string | null
@@ -5057,6 +5110,7 @@ export type Database = {
         }
         Update: {
           admission_number?: string | null
+          boarding_status?: string | null
           class_id?: string | null
           created_at?: string | null
           date_of_birth?: string | null
@@ -5557,45 +5611,69 @@ export type Database = {
       }
       uneb_school_settings: {
         Row: {
+          center_name: string | null
+          center_number: string | null
           contact_email: string | null
           contact_person: string | null
           contact_phone: string | null
           created_at: string | null
+          current_academic_year: number | null
           examination_body: string | null
           id: string
           is_registered: boolean | null
+          registration_deadline_uace: string | null
+          registration_deadline_uce: string | null
+          registration_open: boolean | null
           registration_year: number | null
           school_center_number: string | null
           school_name: string | null
           tenant_id: string
+          uace_registration_fee: number | null
+          uce_registration_fee: number | null
           updated_at: string | null
         }
         Insert: {
+          center_name?: string | null
+          center_number?: string | null
           contact_email?: string | null
           contact_person?: string | null
           contact_phone?: string | null
           created_at?: string | null
+          current_academic_year?: number | null
           examination_body?: string | null
           id?: string
           is_registered?: boolean | null
+          registration_deadline_uace?: string | null
+          registration_deadline_uce?: string | null
+          registration_open?: boolean | null
           registration_year?: number | null
           school_center_number?: string | null
           school_name?: string | null
           tenant_id: string
+          uace_registration_fee?: number | null
+          uce_registration_fee?: number | null
           updated_at?: string | null
         }
         Update: {
+          center_name?: string | null
+          center_number?: string | null
           contact_email?: string | null
           contact_person?: string | null
           contact_phone?: string | null
           created_at?: string | null
+          current_academic_year?: number | null
           examination_body?: string | null
           id?: string
           is_registered?: boolean | null
+          registration_deadline_uace?: string | null
+          registration_deadline_uce?: string | null
+          registration_open?: boolean | null
           registration_year?: number | null
           school_center_number?: string | null
           school_name?: string | null
           tenant_id?: string
+          uace_registration_fee?: number | null
+          uce_registration_fee?: number | null
           updated_at?: string | null
         }
         Relationships: [
@@ -5713,6 +5791,14 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { user_id: string }; Returns: boolean }
+      link_parent_to_student: {
+        Args: {
+          p_parent_id: string
+          p_relationship?: string
+          p_student_id: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       app_role:

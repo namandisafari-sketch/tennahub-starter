@@ -76,7 +76,8 @@ export const ReceiptSettings = ({ tenantId, businessName = "My Business", curren
         .maybeSingle();
       
       if (error) throw error;
-      return data as ReceiptSettingsData | null;
+      // Cast to unknown first to avoid type mismatch during type regeneration
+      return data as unknown as ReceiptSettingsData | null;
     },
     enabled: !!tenantId,
   });

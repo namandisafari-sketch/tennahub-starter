@@ -66,7 +66,13 @@ export default function ECDLearningAreasManager() {
         .eq('tenant_id', tenantId)
         .order('display_order');
       if (error) throw error;
-      return data;
+      // Map to expected format with defaults for missing fields
+      return (data || []).map((s: any) => ({
+        ...s,
+        label: s.label || s.name || s.code,
+        icon: s.icon || '⭐',
+        color: s.color || '#3B82F6',
+      }));
     },
     enabled: !!tenantId,
   });

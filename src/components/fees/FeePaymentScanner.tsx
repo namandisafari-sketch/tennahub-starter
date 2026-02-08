@@ -204,12 +204,18 @@ export function FeePaymentScanner({ tenantId }: FeePaymentScannerProps) {
     // Fetch all active students for this tenant - sorted by full_name to match ID card generation order
     const { data: allStudents, error: fetchError } = await supabase
       .from("students")
-      .select("id, full_name, admission_number, boarding_status, school_classes!class_id(name, level)")
+      .select("id, full_name, admission_number, school_classes!class_id(name, level)")
       .eq("tenant_id", tenantId)
       .eq("is_active", true)
       .order("full_name", { ascending: true });
     
     if (fetchError) throw fetchError;
+    
+    // Map to expected format with boarding_status default
+    const mappedStudents = (allStudents || []).map((s: any) => ({
+      ...s,
+      boarding_status: s.boarding_status || 'day'
+    })) as StudentInfo[];
 
     // Handle barcode format: STU-XXXX or custom prefix like PREFIX-XXXX
     const barcodeMatch = code.match(/^([A-Z]+)-(\d+)$/);
@@ -218,19 +224,19 @@ export function FeePaymentScanner({ tenantId }: FeePaymentScannerProps) {
       
       // Student index is 1-based, array is 0-based
       // This matches how StudentCards.tsx generates IDs (sorted alphabetically by full_name)
-      if (indexNum > 0 && indexNum <= (allStudents?.length || 0)) {
-        studentData = allStudents?.[indexNum - 1] || null;
+      if (indexNum > 0 && indexNum <= mappedStudents.length) {
+        studentData = mappedStudents[indexNum - 1];
       }
       
       // Also try matching by admission_number directly
       if (!studentData) {
-        studentData = allStudents?.find(s => s.admission_number === code) || null;
+        studentData = mappedStudents.find(s => s.admission_number === code) || null;
       }
     }
 
     // Try lookup by exact admission number or UUID
     if (!studentData) {
-      studentData = allStudents?.find(s => 
+      studentData = mappedStudents.find(s => 
         s.admission_number === code || 
         s.id === code
       ) || null;
