@@ -2,12 +2,15 @@ import { useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/AdminSidebar";
+import { FullscreenToggle } from "@/components/FullscreenToggle";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useFullscreen } from "@/hooks/use-fullscreen";
 
 export function AdminLayout() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isFullscreen, containerRef, toggleFullscreen } = useFullscreen();
 
   useEffect(() => {
     checkAdminAuth();
@@ -49,11 +52,13 @@ export function AdminLayout() {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
-        <AdminSidebar />
+      <div ref={containerRef} className={`min-h-screen flex w-full bg-background ${isFullscreen ? 'fullscreen-mode' : ''}`}>
+        {!isFullscreen && <AdminSidebar />}
         <div className="flex-1 flex flex-col">
-          <header className="h-14 border-b border-border flex items-center px-4 bg-card">
-            <SidebarTrigger />
+          <header className={`h-14 border-b border-border flex items-center px-4 bg-card ${isFullscreen ? 'justify-end' : ''}`}>
+            {!isFullscreen && <SidebarTrigger />}
+            <div className="flex-1" />
+            <FullscreenToggle isFullscreen={isFullscreen} onToggle={toggleFullscreen} />
           </header>
           <main className="flex-1 overflow-auto">
             <Outlet />

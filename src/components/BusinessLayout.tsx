@@ -5,10 +5,12 @@ import { BusinessSidebar } from "@/components/BusinessSidebar";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { TermsFooterLink } from "@/components/TermsFooterLink";
+import { FullscreenToggle } from "@/components/FullscreenToggle";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useSubscriptionCheck } from "@/hooks/use-subscription-check";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useFullscreen } from "@/hooks/use-fullscreen";
 
 interface LocationState {
   devBusinessType?: string;
@@ -20,6 +22,7 @@ export function BusinessLayout() {
   const location = useLocation();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const { isFullscreen, containerRef, toggleFullscreen } = useFullscreen();
   const [businessName, setBusinessName] = useState("");
   const [businessType, setBusinessType] = useState("");
   const [isDevMode, setIsDevMode] = useState(false);
@@ -109,36 +112,48 @@ export function BusinessLayout() {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background relative">
-        {/* Desktop sidebar - hidden on mobile (screens < 768px) */}
-        <div className="hidden md:block">
-          <BusinessSidebar businessName={businessName} businessType={businessType} devMode={isDevMode} />
-        </div>
+      <div 
+        ref={containerRef}
+        className={`min-h-screen flex w-full bg-background relative ${isFullscreen ? 'fullscreen-mode' : ''}`}
+      >
+        {/* Desktop sidebar - hidden on mobile (screens < 768px) or in fullscreen */}
+        {!isFullscreen && (
+          <div className="hidden md:block">
+            <BusinessSidebar businessName={businessName} businessType={businessType} devMode={isDevMode} />
+          </div>
+        )}
         
         <div className="flex-1 flex flex-col min-w-0">
-          {/* Announcement Banner - Always visible at top */}
-          <AnnouncementBanner />
+          {/* Announcement Banner - Hidden in fullscreen */}
+          {!isFullscreen && <AnnouncementBanner />}
           
           {/* Desktop header with sidebar trigger - hidden on mobile */}
-          <header className="hidden md:flex h-14 border-b border-border items-center px-4 bg-card/95 backdrop-blur-sm sticky top-0 z-40">
-            <SidebarTrigger className="touch-target" />
+          <header className={`hidden md:flex h-14 border-b border-border items-center px-4 bg-card/95 backdrop-blur-sm sticky top-0 z-40 ${isFullscreen ? 'justify-end' : ''}`}>
+            {!isFullscreen && <SidebarTrigger className="touch-target" />}
+            <div className="flex-1" />
+            <FullscreenToggle isFullscreen={isFullscreen} onToggle={toggleFullscreen} />
           </header>
           
-          {/* Mobile header - shown only on mobile (screens < 768px) */}
-          <header className="flex md:hidden h-14 border-b border-border items-center px-4 bg-card/95 backdrop-blur-sm sticky top-0 z-40 safe-top">
-            <span className="font-semibold text-sm truncate">{businessName}</span>
-          </header>
+          {/* Mobile header - shown only on mobile (screens < 768px), hidden in fullscreen */}
+          {!isFullscreen && (
+            <header className="flex md:hidden h-14 border-b border-border items-center justify-between px-4 bg-card/95 backdrop-blur-sm sticky top-0 z-40 safe-top">
+              <span className="font-semibold text-sm truncate">{businessName}</span>
+              <FullscreenToggle isFullscreen={isFullscreen} onToggle={toggleFullscreen} />
+            </header>
+          )}
           
           {/* Main content - add bottom padding on mobile for bottom nav */}
-          <main className="flex-1 overflow-auto p-4 sm:p-6 pb-24 md:pb-6 safe-bottom">
+          <main className={`flex-1 overflow-auto p-4 sm:p-6 ${isFullscreen ? 'p-6' : 'pb-24 md:pb-6'} safe-bottom`}>
             <Outlet />
           </main>
         </div>
         
-        {/* Mobile bottom navigation - only visible on mobile (screens < 768px) */}
-        <div className="block md:hidden">
-          <MobileBottomNav businessType={businessType} devMode={isDevMode} />
-        </div>
+        {/* Mobile bottom navigation - only visible on mobile (screens < 768px), hidden in fullscreen */}
+        {!isFullscreen && (
+          <div className="block md:hidden">
+            <MobileBottomNav businessType={businessType} devMode={isDevMode} />
+          </div>
+        )}
         
         {/* Terms & Conditions link for school businesses - positioned fixed */}
         {(businessType === 'school' || businessType === 'secondary_school' || businessType === 'kindergarten' || businessType === 'primary_school') && (
