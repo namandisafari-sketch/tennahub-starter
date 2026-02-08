@@ -1489,6 +1489,203 @@ export type Database = {
           },
         ]
       }
+      leases: {
+        Row: {
+          auto_renew: boolean | null
+          created_at: string
+          created_by: string | null
+          deposit_amount: number | null
+          deposit_paid: number | null
+          end_date: string
+          id: string
+          late_fee_amount: number | null
+          late_fee_grace_days: number | null
+          lease_number: string
+          monthly_rent: number
+          move_in_date: string | null
+          move_out_date: string | null
+          outstanding_balance: number | null
+          payment_due_day: number | null
+          renewal_reminder_days: number | null
+          rental_tenant_id: string
+          special_conditions: string | null
+          start_date: string
+          status: string
+          tenant_id: string
+          terms_and_conditions: string | null
+          unit_id: string
+          updated_at: string
+        }
+        Insert: {
+          auto_renew?: boolean | null
+          created_at?: string
+          created_by?: string | null
+          deposit_amount?: number | null
+          deposit_paid?: number | null
+          end_date: string
+          id?: string
+          late_fee_amount?: number | null
+          late_fee_grace_days?: number | null
+          lease_number: string
+          monthly_rent: number
+          move_in_date?: string | null
+          move_out_date?: string | null
+          outstanding_balance?: number | null
+          payment_due_day?: number | null
+          renewal_reminder_days?: number | null
+          rental_tenant_id: string
+          special_conditions?: string | null
+          start_date: string
+          status?: string
+          tenant_id: string
+          terms_and_conditions?: string | null
+          unit_id: string
+          updated_at?: string
+        }
+        Update: {
+          auto_renew?: boolean | null
+          created_at?: string
+          created_by?: string | null
+          deposit_amount?: number | null
+          deposit_paid?: number | null
+          end_date?: string
+          id?: string
+          late_fee_amount?: number | null
+          late_fee_grace_days?: number | null
+          lease_number?: string
+          monthly_rent?: number
+          move_in_date?: string | null
+          move_out_date?: string | null
+          outstanding_balance?: number | null
+          payment_due_day?: number | null
+          renewal_reminder_days?: number | null
+          rental_tenant_id?: string
+          special_conditions?: string | null
+          start_date?: string
+          status?: string
+          tenant_id?: string
+          terms_and_conditions?: string | null
+          unit_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leases_rental_tenant_id_fkey"
+            columns: ["rental_tenant_id"]
+            isOneToOne: false
+            referencedRelation: "rental_tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leases_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leases_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "rental_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_requests: {
+        Row: {
+          actual_cost: number | null
+          assigned_to: string | null
+          category: string
+          completed_date: string | null
+          contractor_name: string | null
+          contractor_phone: string | null
+          created_at: string
+          description: string
+          estimated_cost: number | null
+          id: string
+          priority: string
+          rental_tenant_id: string | null
+          reported_by: string | null
+          request_number: string
+          resolution_notes: string | null
+          scheduled_date: string | null
+          status: string
+          tenant_id: string
+          title: string
+          unit_id: string
+          updated_at: string
+        }
+        Insert: {
+          actual_cost?: number | null
+          assigned_to?: string | null
+          category?: string
+          completed_date?: string | null
+          contractor_name?: string | null
+          contractor_phone?: string | null
+          created_at?: string
+          description: string
+          estimated_cost?: number | null
+          id?: string
+          priority?: string
+          rental_tenant_id?: string | null
+          reported_by?: string | null
+          request_number: string
+          resolution_notes?: string | null
+          scheduled_date?: string | null
+          status?: string
+          tenant_id: string
+          title: string
+          unit_id: string
+          updated_at?: string
+        }
+        Update: {
+          actual_cost?: number | null
+          assigned_to?: string | null
+          category?: string
+          completed_date?: string | null
+          contractor_name?: string | null
+          contractor_phone?: string | null
+          created_at?: string
+          description?: string
+          estimated_cost?: number | null
+          id?: string
+          priority?: string
+          rental_tenant_id?: string | null
+          reported_by?: string | null
+          request_number?: string
+          resolution_notes?: string | null
+          scheduled_date?: string | null
+          status?: string
+          tenant_id?: string
+          title?: string
+          unit_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_requests_rental_tenant_id_fkey"
+            columns: ["rental_tenant_id"]
+            isOneToOne: false
+            referencedRelation: "rental_tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_requests_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_requests_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "rental_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       marketers: {
         Row: {
           approved_signups: number | null
@@ -2220,6 +2417,76 @@ export type Database = {
           },
         ]
       }
+      property_inspections: {
+        Row: {
+          created_at: string
+          findings: Json | null
+          id: string
+          inspection_date: string
+          inspection_type: string
+          inspector_name: string | null
+          lease_id: string | null
+          manager_signature_url: string | null
+          notes: string | null
+          overall_condition: string | null
+          tenant_id: string
+          tenant_signature_url: string | null
+          unit_id: string
+        }
+        Insert: {
+          created_at?: string
+          findings?: Json | null
+          id?: string
+          inspection_date: string
+          inspection_type?: string
+          inspector_name?: string | null
+          lease_id?: string | null
+          manager_signature_url?: string | null
+          notes?: string | null
+          overall_condition?: string | null
+          tenant_id: string
+          tenant_signature_url?: string | null
+          unit_id: string
+        }
+        Update: {
+          created_at?: string
+          findings?: Json | null
+          id?: string
+          inspection_date?: string
+          inspection_type?: string
+          inspector_name?: string | null
+          lease_id?: string | null
+          manager_signature_url?: string | null
+          notes?: string | null
+          overall_condition?: string | null
+          tenant_id?: string
+          tenant_signature_url?: string | null
+          unit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_inspections_lease_id_fkey"
+            columns: ["lease_id"]
+            isOneToOne: false
+            referencedRelation: "leases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "property_inspections_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "property_inspections_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "rental_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       receipt_settings: {
         Row: {
           created_at: string | null
@@ -2262,6 +2529,216 @@ export type Database = {
             foreignKeyName: "receipt_settings_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: true
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rental_id_cards: {
+        Row: {
+          card_number: string
+          created_at: string
+          id: string
+          qr_code_data: string | null
+          rental_tenant_id: string
+          status: string | null
+          tenant_id: string
+          unit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          card_number: string
+          created_at?: string
+          id?: string
+          qr_code_data?: string | null
+          rental_tenant_id: string
+          status?: string | null
+          tenant_id: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          card_number?: string
+          created_at?: string
+          id?: string
+          qr_code_data?: string | null
+          rental_tenant_id?: string
+          status?: string | null
+          tenant_id?: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_id_cards_rental_tenant_id_fkey"
+            columns: ["rental_tenant_id"]
+            isOneToOne: false
+            referencedRelation: "rental_tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rental_id_cards_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rental_id_cards_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "rental_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rental_payment_proofs: {
+        Row: {
+          amount: number
+          card_id: string | null
+          created_at: string
+          id: string
+          lease_id: string | null
+          notes: string | null
+          payer_name: string
+          payment_date: string | null
+          payment_provider: string | null
+          status: string | null
+          tenant_id: string
+          transaction_reference: string | null
+          updated_at: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          amount: number
+          card_id?: string | null
+          created_at?: string
+          id?: string
+          lease_id?: string | null
+          notes?: string | null
+          payer_name: string
+          payment_date?: string | null
+          payment_provider?: string | null
+          status?: string | null
+          tenant_id: string
+          transaction_reference?: string | null
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          amount?: number
+          card_id?: string | null
+          created_at?: string
+          id?: string
+          lease_id?: string | null
+          notes?: string | null
+          payer_name?: string
+          payment_date?: string | null
+          payment_provider?: string | null
+          status?: string | null
+          tenant_id?: string
+          transaction_reference?: string | null
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_payment_proofs_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "rental_id_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rental_payment_proofs_lease_id_fkey"
+            columns: ["lease_id"]
+            isOneToOne: false
+            referencedRelation: "leases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rental_payment_proofs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rental_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          due_date: string
+          id: string
+          late_fee_applied: number | null
+          lease_id: string
+          notes: string | null
+          payment_date: string
+          payment_method: string | null
+          payment_type: string
+          received_by: string | null
+          reference_number: string | null
+          rental_tenant_id: string
+          status: string
+          tenant_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          due_date: string
+          id?: string
+          late_fee_applied?: number | null
+          lease_id: string
+          notes?: string | null
+          payment_date?: string
+          payment_method?: string | null
+          payment_type?: string
+          received_by?: string | null
+          reference_number?: string | null
+          rental_tenant_id: string
+          status?: string
+          tenant_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          due_date?: string
+          id?: string
+          late_fee_applied?: number | null
+          lease_id?: string
+          notes?: string | null
+          payment_date?: string
+          payment_method?: string | null
+          payment_type?: string
+          received_by?: string | null
+          reference_number?: string | null
+          rental_tenant_id?: string
+          status?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_payments_lease_id_fkey"
+            columns: ["lease_id"]
+            isOneToOne: false
+            referencedRelation: "leases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rental_payments_rental_tenant_id_fkey"
+            columns: ["rental_tenant_id"]
+            isOneToOne: false
+            referencedRelation: "rental_tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rental_payments_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
             referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
