@@ -50,7 +50,8 @@ export function UNEBSettings({ tenantId }: UNEBSettingsProps) {
         .maybeSingle();
       
       if (error) throw error;
-      return data as UNEBSettingsData | null;
+      // Cast to unknown first to avoid type mismatch during type regeneration
+      return data as unknown as UNEBSettingsData | null;
     },
   });
 
